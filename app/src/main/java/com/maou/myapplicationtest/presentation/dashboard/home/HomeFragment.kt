@@ -1,5 +1,6 @@
 package com.maou.myapplicationtest.presentation.dashboard.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.maou.myapplicationtest.data.source.local.AppSharedPref
 import com.maou.myapplicationtest.databinding.FragmentHomeBinding
 import com.maou.myapplicationtest.model.AccountInfo
+import com.maou.myapplicationtest.presentation.qrcode.QRCodeActivity
 import com.smarteist.autoimageslider.SliderView
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -62,7 +64,7 @@ class HomeFragment : Fragment() {
             }
             HomeUiState.Init -> Unit
             is HomeUiState.Loading -> {
-                Toast.makeText(requireContext(), "Loading...", Toast.LENGTH_SHORT).show()
+
             }
             is HomeUiState.Success -> {
                 setAccountInfo(state.accountInfo)
@@ -79,16 +81,18 @@ class HomeFragment : Fragment() {
 
             Glide.with(requireContext()).load(accountInfo.qrcode).into(qrCode)
 
+            qrCode.setOnClickListener {
+                Intent(requireActivity(), QRCodeActivity::class.java).also {
+                    it.putExtra("qr_code", accountInfo.qrcode)
+                    startActivity(it)
+                }
+            }
+
             setSliding(accountInfo.banner)
         }
     }
 
     private fun setSliding(listBanner: List<String>) {
-//        val listSlider = listOf(
-//            "https://soal.staging.id/img/banner-app-750x375-hitam.png",
-//            "https://soal.staging.id/img/banner-app-750x375-putih.png",
-//            "https://soal.staging.id/img/banner-app-750x375-kuning.png"
-//        )
 
         val sliderAdapter = SliderAdapter(listBanner)
 
